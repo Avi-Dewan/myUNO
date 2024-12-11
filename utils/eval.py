@@ -1,6 +1,8 @@
 import numpy as np
 import torch
-from pytorch_lightning.metrics import Metric
+# from pytorch_lightning.metrics import Metric
+from torchmetrics import Metric
+
 
 from scipy.optimize import linear_sum_assignment
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi_score
