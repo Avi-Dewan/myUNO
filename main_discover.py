@@ -3,7 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
 from pl_bolts.optimizers.lr_scheduler import LinearWarmupCosineAnnealingLR
-from pytorch_lightning.metrics import Accuracy
+# OLD (remove this line)
+# from pytorch_lightning.metrics import Accuracy
+
+# NEW (replace with this)
+from torchmetrics.classification import Accuracy
 
 from utils.data import get_datamodule
 from utils.nets import MultiHeadResNet
