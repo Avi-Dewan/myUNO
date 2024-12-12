@@ -247,7 +247,7 @@ class Discoverer(pl.LightningModule):
         self.metrics[dl_idx].update(preds, labels)
         self.metrics_inc[dl_idx].update(preds_inc, labels)
 
-    def on_validation_epoch_end(self, _):
+    def on_validation_epoch_end(self):
         results = [m.compute() for m in self.metrics]
         results_inc = [m.compute() for m in self.metrics_inc]
         # log metrics
