@@ -81,18 +81,34 @@ class Discoverer(pl.LightningModule):
         )
 
         # metrics
+        # self.metrics = torch.nn.ModuleList(
+        #     [
+        #         ClusterMetrics(self.hparams.num_heads),
+        #         ClusterMetrics(self.hparams.num_heads),
+        #         Accuracy(),
+        #     ]
+        # )
+        # self.metrics_inc = torch.nn.ModuleList(
+        #     [
+        #         ClusterMetrics(self.hparams.num_heads),
+        #         ClusterMetrics(self.hparams.num_heads),
+        #         Accuracy(),
+        #     ]
+        # )
+
+        # Initialize metrics for tracking performance
         self.metrics = torch.nn.ModuleList(
             [
                 ClusterMetrics(self.hparams.num_heads),
                 ClusterMetrics(self.hparams.num_heads),
-                Accuracy(),
+                Accuracy(task="multiclass", num_classes=self.hparams.num_labeled_classes),  # Update here
             ]
         )
         self.metrics_inc = torch.nn.ModuleList(
             [
                 ClusterMetrics(self.hparams.num_heads),
                 ClusterMetrics(self.hparams.num_heads),
-                Accuracy(),
+                Accuracy(task="multiclass", num_classes=self.hparams.num_labeled_classes + self.hparams.num_unlabeled_classes),  # Incremental classes
             ]
         )
 
