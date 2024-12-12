@@ -251,6 +251,10 @@ class Discoverer(pl.LightningModule):
         results = [m.compute() for m in self.metrics]
         results_inc = [m.compute() for m in self.metrics_inc]
         # log metrics
+
+        print("Results_prior: ", result)
+        print("Results_INC_prior: ", result_inc)
+
         for dl_idx, (result, result_inc) in enumerate(zip(results, results_inc)):
             prefix = self.trainer.datamodule.dataloader_mapping[dl_idx]
             prefix_inc = "incremental/" + prefix
