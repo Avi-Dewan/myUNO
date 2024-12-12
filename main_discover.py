@@ -252,8 +252,8 @@ class Discoverer(pl.LightningModule):
         results_inc = [m.compute() for m in self.metrics_inc]
         # log metrics
 
-        print("Results_prior: ", result)
-        print("Results_INC_prior: ", result_inc)
+        # print("Results_prior: ", result)
+        # print("Results_INC_prior: ", result_inc)
 
         for dl_idx, (result, result_inc) in enumerate(zip(results, results_inc)):
             prefix = self.trainer.datamodule.dataloader_mapping[dl_idx]
@@ -270,12 +270,17 @@ class Discoverer(pl.LightningModule):
                     self.log(name + "/best", best, sync_dist=True)
                     self.log(name_inc + "/avg", avg_inc, sync_dist=True)
                     self.log(name_inc + "/best", best_inc, sync_dist=True)
+
+                    print(f"Metric: {name} - Avg: {avg.item()}, Best: {best.item()}")
+                    print(f"Metric: {name_inc} - Avg: {avg_inc.item()}, Best: {best_inc.item()}")
+
             else:
                 self.log(prefix + "/acc", result)
                 self.log(prefix_inc + "/acc", result_inc)
         
-        print("Results: ", result)
-        print("Results_INC: ", result_inc)
+                # Print metrics
+                print(f"Accuracy: {prefix} - {result}")
+                print(f"Incremental Accuracy: {prefix_inc} - {result_inc}")
 
 
 def main(args):
