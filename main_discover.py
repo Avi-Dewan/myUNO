@@ -145,7 +145,7 @@ class Discoverer(pl.LightningModule):
     def forward(self, x):
         return self.model(x)
 
-    def on_epoch_start(self):
+    def on_train_epoch_start(self):
         self.loss_per_head = torch.zeros_like(self.loss_per_head)
 
     def unpack_batch(self, batch):
@@ -247,7 +247,7 @@ class Discoverer(pl.LightningModule):
         self.metrics[dl_idx].update(preds, labels)
         self.metrics_inc[dl_idx].update(preds_inc, labels)
 
-    def validation_epoch_end(self, _):
+    def on_validation_epoch_end(self, _):
         results = [m.compute() for m in self.metrics]
         results_inc = [m.compute() for m in self.metrics_inc]
         # log metrics
