@@ -269,6 +269,9 @@ class Discoverer(pl.LightningModule):
             else:
                 self.log(prefix + "/acc", result)
                 self.log(prefix_inc + "/acc", result_inc)
+        
+        print("Results: ", result)
+        print("Results_INC: ", result_inc)
 
 
 def main(args):
