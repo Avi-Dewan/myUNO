@@ -151,7 +151,7 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         """
         Introduce class imbalance by removing a percentage of samples from specified classes.
         """
-        targets = np.array([img[1] for img in dataset.imgs])
+        targets = np.array(dataset.targets)  # Use dataset.targets for labels
         
         for imbalance in self.imbalance_config:
             target_class = imbalance['class']
@@ -163,8 +163,8 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
             samples_to_remove = random.sample(list(class_indices), num_samples_to_remove)
 
             # Remove the selected samples
-            dataset.imgs = [img for i, img in enumerate(dataset.imgs) if i not in samples_to_remove]
-            dataset.targets = [target for i, target in enumerate(dataset.targets) if i not in samples_to_remove]
+            dataset.data = np.delete(dataset.data, samples_to_remove, axis=0)  # Remove from data
+            dataset.targets = np.delete(dataset.targets, samples_to_remove, axis=0)  # Remove from targets
 
 
     @property
