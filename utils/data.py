@@ -117,10 +117,15 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
             self.data_dir, train=True, transform=self.transform_train
         )
 
+        
+
         # Apply imbalance to the labeled classes
         if self.imbalance_config:
             self.imbalance_config = ast.literal_eval(self.imbalance_config)
             self._apply_class_imbalance(self.train_dataset)
+
+        # Print class-wise distribution before training
+        self.print_class_distribution(self.train_dataset, "Train Dataset")
 
         # val datasets
         val_dataset_train = self.dataset_class(
@@ -174,6 +179,16 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         dataset.data = np.delete(dataset.data, list(indices_to_remove), axis=0)
         dataset.targets = np.delete(dataset.targets, list(indices_to_remove), axis=0)
 
+    def print_class_distribution(self, dataset, name):
+        """
+        Print the class-wise distribution of the dataset.
+        """
+        targets = np.array(dataset.targets)
+        unique_classes, counts = np.unique(targets, return_counts=True)
+
+        print("Class-wise distribution of " + name + " : ")
+        for cls, count in zip(unique_classes, counts):
+            print(f"Class {cls}: {count} samples")
 
     @property
     def dataloader_mapping(self):
