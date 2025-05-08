@@ -51,7 +51,8 @@ parser.add_argument("--pretrained", type=str, help="pretrained checkpoint path")
 parser.add_argument("--multicrop", default=False, action="store_true", help="activates multicrop")
 parser.add_argument("--num_large_crops", default=2, type=int, help="number of large crops")
 parser.add_argument("--num_small_crops", default=2, type=int, help="number of small crops")
-
+parser.add_argument("--imbalance_config", type=str, default=None, help="Class imbalance configuration (e.g., [{'class': 9, 'percentage': 20}, {'class': 7, 'percentage': 5}])"
+)
 
 class Discoverer(pl.LightningModule):
     def __init__(self, **kwargs):

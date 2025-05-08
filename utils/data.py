@@ -7,7 +7,8 @@ from utils.transforms import DiscoverTargetTransform
 
 import numpy as np
 import os
-
+import ast
+import random
 
 def get_datamodule(args, mode):
     if mode == "pretrain":
@@ -98,6 +99,9 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         )
         self.transform_val = get_transforms("eval", args.dataset)
 
+        # Store imbalance configuration
+        self.imbalance_config = args.imbalance_config
+
     def prepare_data(self):
         self.dataset_class(self.data_dir, train=True, download=self.download)
         self.dataset_class(self.data_dir, train=False, download=self.download)
@@ -112,6 +116,11 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         self.train_dataset = self.dataset_class(
             self.data_dir, train=True, transform=self.transform_train
         )
+
+        # Apply imbalance to the labeled classes
+        if self.imbalance_config:
+            args.imbalance_config = ast.literal_eval(args.imbalance_config)
+            self._apply_class_imbalance(self.train_dataset)
 
         # val datasets
         val_dataset_train = self.dataset_class(
@@ -137,6 +146,26 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         val_subset_lab_test = torch.utils.data.Subset(val_dataset_test, val_indices_lab_test)
 
         self.val_datasets = [val_subset_unlab_train, val_subset_unlab_test, val_subset_lab_test]
+
+    def _apply_class_imbalance(self, dataset):
+        """
+        Introduce class imbalance by removing a percentage of samples from specified classes.
+        """
+        targets = np.array([img[1] for img in dataset.imgs])
+        
+        for imbalance in self.imbalance_config:
+            target_class = imbalance['class']
+            remove_percentage = imbalance['percentage'] / 100
+            class_indices = np.where(targets == target_class)[0]
+
+            # Select how many samples to remove
+            num_samples_to_remove = int(len(class_indices) * remove_percentage)
+            samples_to_remove = random.sample(list(class_indices), num_samples_to_remove)
+
+            # Remove the selected samples
+            dataset.imgs = [img for i, img in enumerate(dataset.imgs) if i not in samples_to_remove]
+            dataset.targets = [target for i, target in enumerate(dataset.targets) if i not in samples_to_remove]
+
 
     @property
     def dataloader_mapping(self):
