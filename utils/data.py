@@ -119,7 +119,7 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
 
         # Apply imbalance to the labeled classes
         if self.imbalance_config:
-            args.imbalance_config = ast.literal_eval(args.imbalance_config)
+            self.imbalance_config = ast.literal_eval(self.imbalance_config)
             self._apply_class_imbalance(self.train_dataset)
 
         # val datasets
