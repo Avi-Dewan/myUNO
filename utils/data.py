@@ -153,13 +153,13 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         self.val_datasets = [val_subset_unlab_train, val_subset_unlab_test, val_subset_lab_test]
 
         # Print class-wise distribution before training
-        self.print_class_distribution(self.val_subset_unlab_train, "Val_subset_unlab_train")
+        self.print_class_distribution(val_subset_unlab_train, "Val_subset_unlab_train")
 
         # Print class-wise distribution before training
-        self.print_class_distribution(self.val_subset_unlab_test, "Val_subset_unlab_testt")
+        self.print_class_distribution(val_subset_unlab_test, "Val_subset_unlab_testt")
 
         # Print class-wise distribution before training
-        self.print_class_distribution(self.val_subset_lab_test, "Val_subset_lab_test")
+        self.print_class_distribution(val_subset_lab_test, "Val_subset_lab_test")
 
     def _apply_class_imbalance(self, dataset):
         """
