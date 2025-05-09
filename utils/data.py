@@ -192,7 +192,13 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         """
         Print the class-wise distribution of the dataset.
         """
-        targets = np.array(dataset.targets)
+         # If dataset is a Subset, get the targets from the original dataset
+        if isinstance(dataset, torch.utils.data.Subset):
+            targets = np.array([dataset.dataset.targets[i] for i in dataset.indices])
+        else:
+            targets = np.array(dataset.targets)
+
+
         unique_classes, counts = np.unique(targets, return_counts=True)
 
         print("\nClass-wise distribution of " + name + " : ")
