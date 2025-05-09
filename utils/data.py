@@ -152,6 +152,15 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
 
         self.val_datasets = [val_subset_unlab_train, val_subset_unlab_test, val_subset_lab_test]
 
+        # Print class-wise distribution before training
+        self.print_class_distribution(self.val_subset_unlab_train, "Val_subset_unlab_train")
+
+        # Print class-wise distribution before training
+        self.print_class_distribution(self.val_subset_unlab_test, "Val_subset_unlab_testt")
+
+        # Print class-wise distribution before training
+        self.print_class_distribution(self.val_subset_lab_test, "Val_subset_lab_test")
+
     def _apply_class_imbalance(self, dataset):
         """
         Introduce class imbalance by removing a percentage of samples from specified classes.
@@ -186,9 +195,11 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         targets = np.array(dataset.targets)
         unique_classes, counts = np.unique(targets, return_counts=True)
 
-        print("Class-wise distribution of " + name + " : ")
+        print("\nClass-wise distribution of " + name + " : ")
         for cls, count in zip(unique_classes, counts):
             print(f"Class {cls}: {count} samples")
+        
+        print("\n")
 
     @property
     def dataloader_mapping(self):
