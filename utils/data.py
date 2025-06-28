@@ -127,6 +127,7 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         # Print class-wise distribution before training
         self.print_class_distribution(self.train_dataset, "Train Dataset")
 
+
         # val datasets
         val_dataset_train = self.dataset_class(
             self.data_dir, train=True, transform=self.transform_val
@@ -134,16 +135,30 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         val_dataset_test = self.dataset_class(
             self.data_dir, train=False, transform=self.transform_val
         )
+
+          # *** ADD IMBALANCE HERE - BEFORE CREATING SUBSETS ***
+        # Apply the same imbalance to validation datasets
+        
+        if self.imbalance_config:
+            self._apply_class_imbalance(val_dataset_train)
+            # Optionally apply to test set too for consistent evaluation
+            self._apply_class_imbalance(val_dataset_test)
+
+
         # unlabeled classes, train set
         val_indices_unlab_train = np.where(
             np.isin(np.array(val_dataset_train.targets), unlabeled_classes)
         )[0]
         val_subset_unlab_train = torch.utils.data.Subset(val_dataset_train, val_indices_unlab_train)
+
+
         # unlabeled classes, test set
         val_indices_unlab_test = np.where(
             np.isin(np.array(val_dataset_test.targets), unlabeled_classes)
         )[0]
         val_subset_unlab_test = torch.utils.data.Subset(val_dataset_test, val_indices_unlab_test)
+
+
         # labeled classes, test set
         val_indices_lab_test = np.where(
             np.isin(np.array(val_dataset_test.targets), labeled_classes)
@@ -151,6 +166,7 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         val_subset_lab_test = torch.utils.data.Subset(val_dataset_test, val_indices_lab_test)
 
         self.val_datasets = [val_subset_unlab_train, val_subset_unlab_test, val_subset_lab_test]
+
 
         # Print class-wise distribution before training
         self.print_class_distribution(val_subset_unlab_train, "Val_subset_unlab_train")

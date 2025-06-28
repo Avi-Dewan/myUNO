@@ -29,3 +29,24 @@ class SinkhornKnopp(torch.nn.Module):
 
         Q *= B  # the colomns must sum to 1 so that Q is an assignment
         return Q.t()
+
+
+# Test the Sinkhorn-Knopp with a simple example
+def test_sinkhorn_knopp():
+    # Example logits (random values)
+    logits = torch.randn(5, 3)  # 5 samples, 3 clusters (prototypes)
+    
+    # Create the SinkhornKnopp module
+    sk = SinkhornKnopp(num_iters=3, epsilon=0.1)
+    
+    # Get the balanced assignment matrix (Q)
+    Q = sk(logits)
+    
+    print("Input logits:")
+    print(logits)
+    print("\nOutput assignment matrix (Q):")
+    print(Q)
+
+
+if __name__ == "__main__":
+    test_sinkhorn_knopp()
