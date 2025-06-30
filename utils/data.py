@@ -141,8 +141,6 @@ class DiscoverCIFARDataModule(pl.LightningDataModule):
         
         if self.imbalance_config:
             self._apply_class_imbalance(val_dataset_train)
-            # Optionally apply to test set too for consistent evaluation
-            self._apply_class_imbalance(val_dataset_test)
 
 
         # unlabeled classes, train set
