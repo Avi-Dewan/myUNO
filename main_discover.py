@@ -14,6 +14,8 @@ from utils.nets import MultiHeadResNet
 from utils.eval import ClusterMetrics
 from utils.sinkhorn_knopp import SinkhornKnopp
 
+import random
+import os
 import numpy as np
 from argparse import ArgumentParser
 from datetime import datetime
@@ -51,8 +53,18 @@ parser.add_argument("--pretrained", type=str, help="pretrained checkpoint path")
 parser.add_argument("--multicrop", default=False, action="store_true", help="activates multicrop")
 parser.add_argument("--num_large_crops", default=2, type=int, help="number of large crops")
 parser.add_argument("--num_small_crops", default=2, type=int, help="number of small crops")
-parser.add_argument("--imbalance_config", type=str, default=None, help="Class imbalance configuration (e.g., [{'class': 9, 'percentage': 20}, {'class': 7, 'percentage': 5}])"
-)
+parser.add_argument("--imbalance_config", type=str, default=None, help="Class imbalance configuration (e.g., [{'class': 9, 'percentage': 20}, {'class': 7, 'percentage': 5}])")
+parser.add_argument('--seed', default=1, type=int)
+    
+def seed_torch(seed=1):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed) # if you are using multi-GPU.
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
 class Discoverer(pl.LightningModule):
     def __init__(self, **kwargs):
@@ -285,6 +297,8 @@ class Discoverer(pl.LightningModule):
 
 
 def main(args):
+    seed_torch(args.seed)
+
     dm = get_datamodule(args, "discover")
 
     run_name = "-".join(["discover", args.arch, args.dataset, args.comment])
